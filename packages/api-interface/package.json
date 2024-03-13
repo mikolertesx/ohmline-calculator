@@ -1,0 +1,10 @@
+{
+    "name": "api-interface",
+    "version": "0.0.1",
+    "main": "./lib/index.ts",
+    "types": "./lib/index.ts",
+    "dependencies": {
+        "prisma-database": "workspace:*",
+        "typescript": "^5.3.3"
+    }
+}

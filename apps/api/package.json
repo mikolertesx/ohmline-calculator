@@ -14,6 +14,8 @@
     "preset": "@repo/jest-presets/jest/node"
   },
   "dependencies": {
+    "api-interface": "workspace:*",
+    "prisma-database": "workspace:*",
     "@repo/logger": "workspace:*",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",

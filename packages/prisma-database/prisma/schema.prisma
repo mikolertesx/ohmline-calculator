@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Resistance {
+  id Int @id @default(autoincrement())
+
+  modifier        Int
+  name            String
+  backgroundColor String
+  textColor       String
+}
+
+model Tolerance {
+  id Int @id @default(autoincrement())
+
+  name            String
+  tolerance       Int
+  backgroundColor String
+  textColor       String
+}
