@@ -1,0 +1,14 @@
+.band {
+  position: absolute;
+  writing-mode: vertical-lr;
+  text-align: left;
+
+  cursor: pointer;
+
+  top: 0;
+  left: 0;
+
+  height: 200px;
+  width: 30px;
+  display: block;
+}

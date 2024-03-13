@@ -1,0 +1,25 @@
+.resistance {
+  display: block;
+  width: 550px;
+  height: 200px;
+  background: #f5f7e6;
+  border: 1px solid black;
+
+  position: relative;
+
+  div:nth-child(1) {
+    left: 15px;
+  }
+
+  div:nth-child(2) {
+    left: 65px;
+  }
+
+  div:nth-child(3) {
+    left: 115px;
+  }
+
+  div:nth-child(4) {
+    left: calc(550px - 30px - 15px);
+  }
+}
