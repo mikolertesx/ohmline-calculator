@@ -63,10 +63,12 @@ app.post(
     res: Response<PostCalculateResponse>
   ) => {
     const { bandAColor, bandBColor, bandCColor, bandDColor } = req.body;
+    
     const resistanceColors = await prisma.resistance.findMany();
     const toleranceVariants = await prisma.tolerance.findMany();
 
     // This will be recreated every run.
+    // Might be a good idea to cache this in the future.
     const calculator = new OhmValueCalculator(resistanceColors, toleranceVariants);
 
     const result = calculator.CalculateOhmValue(
