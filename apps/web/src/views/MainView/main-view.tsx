@@ -1,21 +1,28 @@
-"use client"
+"use client";
+import styles from './main-view.module.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import {Resistance as ResistanceModel, Tolerance as ToleranceModel} from 'prisma-database';
+import {
+  Resistance as ResistanceModel,
+  Tolerance as ToleranceModel,
+} from "prisma-database";
 
-import Resistance from '../../components/Resistance/resistance';
-import ResistancePickerModal from '../../components/Modals/ResistancePickerModal/resistance-picker-modal';
-import TolerancePickerModal from '../../components/Modals/TolerancePickerModal/tolerance-picker-modal';
 
-import useData from './useData';
-import useResistance from './useResistance';
+import Resistance from "../../components/Resistance/resistance";
+import ResistancePickerModal from "../../components/Modals/ResistancePickerModal/resistance-picker-modal";
+import TolerancePickerModal from "../../components/Modals/TolerancePickerModal/tolerance-picker-modal";
+
+import useData from "./useData";
+import useResistance from "./useResistance";
+import Display from "../../components/Display/Display";
+import { Card, CardContent, Typography } from '@mui/material';
 
 export type ColorCollection = [
   ResistanceModel,
   ResistanceModel,
   ResistanceModel,
-  ToleranceModel
+  ToleranceModel,
 ];
 
 const MainView = () => {
@@ -30,7 +37,7 @@ const MainView = () => {
   const [showColorModal, setShowColorModal] = useState(false);
   const [showToleranceModal, setShowToleranceModal] = useState(false);
 
-  const resistanceValue = useResistance({
+  const { value: [minimumResistance, baseResistance, maximumResistance], isLoading } = useResistance({
     resistanceA: colorCollection?.[0]?.name,
     resistanceB: colorCollection?.[1]?.name,
     resistanceC: colorCollection?.[2]?.name,
@@ -70,52 +77,71 @@ const MainView = () => {
     setShowToleranceModal(false);
   };
 
+  const clickResistanceHandler = (position: number) => {
+    setShowColorModal(true);
+    setSelectedResistance(position);
+  };
+
+  const clickToleranceHandler = () => {
+    setShowToleranceModal(true);
+  };
+
   if (!colorCollection) {
     return null;
   }
+
+  const [resistanceA, resistanceB, resistanceC, tolerance] = colorCollection;
 
   const currentlySelectedResistance =
     selectedResistance !== null
       ? colorCollection[selectedResistance].name
       : undefined;
 
-  const currentlySelectedTolerance = colorCollection[3]?.name;
 
   return (
-    <>
+    <div className={styles['main']}>
       <ResistancePickerModal
         colors={colors}
         show={showColorModal}
         onPick={pickColorHandler}
         currentlySelected={currentlySelectedResistance}
       />
+
       <TolerancePickerModal
         tolerances={tolerances}
         show={showToleranceModal}
         onPick={pickResistanceHandler}
-        currentlySelected={currentlySelectedTolerance}
+        currentlySelected={tolerance?.name}
       />
-      <Resistance
-        resistanceA={colorCollection[0]}
-        resistanceB={colorCollection[1]}
-        resistanceC={colorCollection[2]}
-        tolerance={colorCollection[3]}
-        onClickResistance={(position) => {
-          setShowColorModal(true);
-          setSelectedResistance(position);
-        }}
-        onClickTolerance={() => {
-          setShowToleranceModal(true);
-        }}
+      <Card variant='outlined'>
+        <CardContent>
+          <Typography variant='h1' mt={2} textAlign='center'>
+            Click on the resistances to select colors.
+          </Typography>
+        </CardContent>
+      </Card>
+
+      <div style={{ display: 'flex', flexGrow: 1, justifyContent: 'center', alignContent: 'center' }}>
+        <Resistance
+          resistanceA={resistanceA}
+          resistanceB={resistanceB}
+          resistanceC={resistanceC}
+          tolerance={tolerance}
+          onClickResistance={clickResistanceHandler}
+          onClickTolerance={clickToleranceHandler}
+        />
+      </div>
+
+
+      <Display
+        base={baseResistance}
+        maximum={maximumResistance}
+        minimum={minimumResistance}
+        tolerance={tolerance?.tolerance}
       />
-      {resistanceValue.isLoading === false && (
-        <>
-          <p>Resistance of {resistanceValue.value[1]} +-</p>
-          <p> - {resistanceValue.value[0]}</p>
-          <p> + {resistanceValue.value[2]}</p>
-        </>
-      )}
-    </>
+
+
+    </div>
   );
 };
 

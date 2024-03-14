@@ -9,12 +9,12 @@ import {
 
 import StarIcon from '@mui/icons-material/Star';
 
-import { ColorModel } from '@ohm-calculate/api-interface';
+import { Resistance as ResistanceModel } from 'prisma-database';
 import ColorBox from '../../ColorBox/ColorBox';
 
 type ResistancePickerModalProps = {
-  colors: ColorModel[];
-  onPick: (color?: ColorModel) => void;
+  colors: ResistanceModel[];
+  onPick: (resistance?: ResistanceModel) => void;
   currentlySelected?: string;
   show: boolean;
 };
@@ -32,8 +32,6 @@ const ResistancePickerModal = ({
       <List
         sx={{
           maxHeight: 800,
-          width: 450,
-          overflow: 'auto',
           bgcolor: 'background.paper',
         }}
       >

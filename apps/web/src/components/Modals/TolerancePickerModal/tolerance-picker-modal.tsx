@@ -6,10 +6,10 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-
 import StarIcon from '@mui/icons-material/Star';
 
-import { ToleranceModel } from '@ohm-calculate/api-interface';
+import { Tolerance as ToleranceModel } from 'prisma-database';
+
 import ColorBox from '../../ColorBox/ColorBox';
 
 type TolerancePickerModalProps = {
@@ -31,8 +31,7 @@ const TolerancePickerModal = ({
       <List
         sx={{
           maxHeight: 800,
-          width: 450,
-          overflow: 'auto',
+          overflow: 'hidden',
           bgcolor: 'background.paper',
         }}
       >
@@ -42,10 +41,12 @@ const TolerancePickerModal = ({
             onClick={() => onPick(tolerance)}
             sx={{
               cursor: 'pointer',
+              paddingRight: 12,
+              overflow: 'hidden'
             }}
             secondaryAction={<ColorBox color={tolerance.backgroundColor} />}
           >
-            <ListItemButton>
+            <ListItemButton sx={{ paddingRight: 12 }}>
               <ListItemIcon>
                 {currentlySelected === tolerance.name && <StarIcon />}
               </ListItemIcon>

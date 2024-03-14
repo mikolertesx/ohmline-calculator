@@ -1,3 +1,5 @@
+import Decimal from 'decimal.js';
+
 import {
   ResistanceColors,
   IOhmValueCalculator,
@@ -54,7 +56,7 @@ class OhmValueCalculator implements IOhmValueCalculator {
     bandBColor: string,
     bandCColor: string,
     bandDColor: string
-  ): [number, number, number] {
+  ): [string, string, string] {
     // TODO Write a proper algorithm to calculate resistances.
     // Naive algorithm.
     const colorCodes = [bandAColor, bandBColor, bandCColor];
@@ -70,15 +72,16 @@ class OhmValueCalculator implements IOhmValueCalculator {
       zeroString += '0';
     }
 
-    const totalValue = Number(
+    const totalValue = new Decimal(
       `${firstColorValue}${secondColorValue}${zeroString}`
     );
 
     const percentage = tolerance / 100;
-    const maxValue = totalValue * (1 + percentage);
-    const minValue = totalValue * (1 - percentage);
+    
+    const maxValue = totalValue.mul(1 + percentage);
+    const minValue = totalValue.mul(1 - percentage);
 
-    return [minValue, totalValue, maxValue];
+    return [minValue.toString(), totalValue.toString(), maxValue.toString()];
   }
 }
 

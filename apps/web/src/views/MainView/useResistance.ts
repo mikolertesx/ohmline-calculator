@@ -1,7 +1,7 @@
 import {
   PostCalculateRequest,
   PostCalculateResponse,
-} from '@ohm-calculate/api-interface';
+} from 'api-interface';
 import { useEffect, useState } from 'react';
 
 type useResistanceProps = {
@@ -18,7 +18,7 @@ const useResistance = ({
   tolerance,
 }: useResistanceProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [value, setValue] = useState([NaN, NaN, NaN]);
+  const [value, setValue] = useState<[string, string, string]>(['NaN', 'NaN', 'NaN']);
 
   useEffect(() => {
     if (!resistanceA || !resistanceB || !resistanceC || !tolerance) {

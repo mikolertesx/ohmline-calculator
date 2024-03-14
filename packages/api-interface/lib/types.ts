@@ -26,5 +26,5 @@ export interface IOhmValueCalculator {
     bandBColor: string,
     bandCColor: string,
     bandDColor: string
-  ): [number, number, number];
+  ): [string, string, string];
 }

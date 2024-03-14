@@ -9,5 +9,5 @@ export type GetToleranceColorsResponse = {
 };
 
 export type PostCalculateResponse = {
-  result: [minTolerance: number, baseTolerance: number, maxTolerance: number];
+  result: [minTolerance: string, baseTolerance: string, maxTolerance: string];
 };
