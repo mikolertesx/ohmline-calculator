@@ -1,3 +1,6 @@
 node_modules
 # Keep environment variables out of version control
-.env
+# This .env file is important for development, and should remain here.
+# It'll never change and be used only during development.
+
+# .env

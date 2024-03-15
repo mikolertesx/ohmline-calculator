@@ -1,22 +1,27 @@
 "use client";
-import styles from './main-view.module.scss';
 
 import React, { useEffect, useState } from "react";
+
+import { Box } from '@mui/material';
 
 import {
   Resistance as ResistanceModel,
   Tolerance as ToleranceModel,
 } from "prisma-database";
 
-
+// Components
 import Resistance from "../../components/Resistance/resistance";
 import ResistancePickerModal from "../../components/Modals/ResistancePickerModal/resistance-picker-modal";
 import TolerancePickerModal from "../../components/Modals/TolerancePickerModal/tolerance-picker-modal";
-
-import useResistance from "./useResistance";
 import Display from "../../components/Display/Display";
-import { Card, CardContent, Typography } from '@mui/material';
-import { trpc } from '../../router';
+import SelectBandCard from '../../components/SelectBandCard/SelectBandCard';
+
+// Hooks
+import useResistance from "../../hooks/MainView/useResistance";
+import useData from '../../hooks/MainView/useData';
+import useDefaultValues from "../../hooks/MainView/useDefaultValues";
+import useBandCollection, { BandCollectionIndex, BandCollectionResistanceSlice, BandCollectionToleranceSlice } from "../../hooks/MainView/useBandCollection";
+
 
 export type ColorCollection = [
   ResistanceModel?,
@@ -26,54 +31,45 @@ export type ColorCollection = [
 ];
 
 const MainView = () => {
-  const [colorCollection, setColorCollection] =
-    useState<ColorCollection | null>();
-
-  const resistances = trpc.getResistances.useQuery();
-  const tolerances = trpc.getTolerances.useQuery();
-
-
-  const [selectedResistance, setSelectedResistance] = useState<number | null>(
+  const { resistanceA, resistanceB, resistanceC, tolerance, updateSingleBand, setBandCollection, getSingleBand } = useBandCollection();
+  // const [colorCollection, setColorCollection] =
+  //   useState<ColorCollection | null>();
+  const [tutorialMode, setTutorialMode] = useState(true);
+  const { resistances, tolerances } = useData();
+  const [selectedResistance, setSelectedResistance] = useState<BandCollectionResistanceSlice | null>(
     null
   );
+
   const [showColorModal, setShowColorModal] = useState(false);
   const [showToleranceModal, setShowToleranceModal] = useState(false);
 
+  // useDefaultValues({
+  //   resistances: resistances.data,
+  //   tolerances: tolerances.data,
+  //   setDefault: setBandCollection
+  // });
+
   const { value: [minimumResistance, baseResistance, maximumResistance] } = useResistance({
-    resistanceA: colorCollection?.[0]?.name,
-    resistanceB: colorCollection?.[1]?.name,
-    resistanceC: colorCollection?.[2]?.name,
-    tolerance: colorCollection?.[3]?.name,
+    resistanceA: resistanceA !== null ? resistanceA.name : null,
+    resistanceB: resistanceB !== null ? resistanceB.name : null,
+    resistanceC: resistanceC !== null ? resistanceC.name : null,
+    tolerance: tolerance !== null ? tolerance.name : null,
   });
 
-  // Pick default values.
-  useEffect(() => {
-    if (!resistances.data || !tolerances.data) return;
-
-    const [first, second, third] = resistances.data;
-    const defaultTolerance = tolerances.data?.[0];
-
-    setColorCollection([first, second, third, defaultTolerance]);
-  }, [resistances.data, tolerances.data]);
-
-  const pickColorHandler = (color?: ResistanceModel) => {
-    if (color && colorCollection) {
-      setColorCollection((prevData) => {
-        (prevData as ColorCollection)[selectedResistance as number] = color;
-
-        return prevData;
-      });
+  const pickResistanceHandler = (resistance: ResistanceModel | null) => {
+    setTutorialMode(false);
+    if (resistance !== null) {
+      updateSingleBand(selectedResistance as BandCollectionResistanceSlice, resistance);
     }
+
     setShowColorModal(false);
   };
 
-  const pickResistanceHandler = (tolerance?: ToleranceModel) => {
-    if (tolerance && colorCollection) {
-      setColorCollection((prevData) => {
-        (prevData as ColorCollection)[3] = tolerance;
+  const pickToleranceHandler = (tolerance: ToleranceModel | null) => {
+    setTutorialMode(false);
 
-        return prevData;
-      });
+    if (tolerance !== null) {
+      updateSingleBand(3, tolerance);
     }
 
     setShowToleranceModal(false);
@@ -81,49 +77,31 @@ const MainView = () => {
 
   const clickResistanceHandler = (position: number) => {
     setShowColorModal(true);
-    setSelectedResistance(position);
+    setSelectedResistance(position as BandCollectionResistanceSlice);
   };
 
   const clickToleranceHandler = () => {
     setShowToleranceModal(true);
   };
 
-  if (!colorCollection) {
-    return null;
-  }
-
-  const [resistanceA, resistanceB, resistanceC, tolerance] = colorCollection;
-
-  const currentlySelectedResistance =
-    selectedResistance !== null
-      ? colorCollection[selectedResistance]?.name
-      : undefined;
-
+  const currentlySelectedResistance = getSingleBand(selectedResistance);
 
   return (
-    <div className={styles['main']}>
+    <Box component='main'>
       <ResistancePickerModal
         resistances={resistances.data}
         show={showColorModal}
-        onPick={pickColorHandler}
-        currentlySelected={currentlySelectedResistance}
+        onPick={pickResistanceHandler}
+        currentlySelected={currentlySelectedResistance !== null ? currentlySelectedResistance.name : null}
       />
-
       <TolerancePickerModal
         tolerances={tolerances.data}
         show={showToleranceModal}
-        onPick={pickResistanceHandler}
+        onPick={pickToleranceHandler}
         currentlySelected={tolerance?.name}
       />
-      <Card variant='outlined'>
-        <CardContent>
-          <Typography variant='h1' mt={2} textAlign='center'>
-            Click on the bands to select values.
-          </Typography>
-        </CardContent>
-      </Card>
-
-      <div style={{ display: 'flex', flexGrow: 1, justifyContent: 'center', alignContent: 'center' }}>
+      <SelectBandCard visible={tutorialMode} />
+      <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'center', alignContent: 'center' }}>
         <Resistance
           resistanceA={resistanceA}
           resistanceB={resistanceB}
@@ -132,18 +110,14 @@ const MainView = () => {
           onClickResistance={clickResistanceHandler}
           onClickTolerance={clickToleranceHandler}
         />
-      </div>
-
-
+      </Box>
       <Display
         base={baseResistance}
         maximum={maximumResistance}
         minimum={minimumResistance}
         tolerance={tolerance?.tolerance}
       />
-
-
-    </div>
+    </Box>
   );
 };
 

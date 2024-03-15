@@ -14,8 +14,8 @@ import ColorBox from '../../ColorBox/ColorBox';
 
 type ResistancePickerModalProps = {
   resistances?: ResistanceModel[];
-  onPick: (resistance?: ResistanceModel) => void;
-  currentlySelected?: string;
+  onPick: (resistance: ResistanceModel | null ) => void;
+  currentlySelected: string | null;
   show: boolean;
 };
 
@@ -28,7 +28,7 @@ const ResistancePickerModal = ({
   currentlySelected,
 }: ResistancePickerModalProps) => {
   return (
-    <Dialog open={show} onClose={() => onPick()}>
+    <Dialog open={show} onClose={() => onPick(null)}>
       <List
         sx={{
           maxHeight: 800,

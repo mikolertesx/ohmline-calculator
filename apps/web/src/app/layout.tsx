@@ -5,6 +5,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <meta property="og:title" content="Ohmline Calculator" />
       <body>{children}</body>
     </html>
   );

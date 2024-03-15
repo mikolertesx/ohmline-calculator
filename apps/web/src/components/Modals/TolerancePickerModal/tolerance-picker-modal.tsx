@@ -14,7 +14,7 @@ import ColorBox from '../../ColorBox/ColorBox';
 
 type TolerancePickerModalProps = {
   tolerances?: ToleranceModel[];
-  onPick: (tolerance?: ToleranceModel) => void;
+  onPick: (tolerance: ToleranceModel | null) => void;
   currentlySelected?: string;
   show: boolean;
 };
@@ -27,7 +27,7 @@ const TolerancePickerModal = ({
   currentlySelected,
 }: TolerancePickerModalProps) => {
   return (
-    <Dialog open={show} onClose={() => onPick()}>
+    <Dialog open={show} onClose={() => onPick(null)}>
       <List
         sx={{
           maxHeight: 800,

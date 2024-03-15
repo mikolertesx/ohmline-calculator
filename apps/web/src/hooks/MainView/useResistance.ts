@@ -1,15 +1,13 @@
-import {
-  PostCalculateRequest,
-  PostCalculateResponse,
-} from 'api-interface';
 import { useEffect, useState } from 'react';
 import { trpc } from '../../router';
 
+type Nullable<T> = T | null;
+
 type useResistanceProps = {
-  resistanceA?: string;
-  resistanceB?: string;
-  resistanceC?: string;
-  tolerance?: string;
+  resistanceA: Nullable<string>;
+  resistanceB: Nullable<string>;
+  resistanceC: Nullable<string>;
+  tolerance: Nullable<string>;
 };
 
 const useResistance = ({
@@ -18,7 +16,6 @@ const useResistance = ({
   resistanceC,
   tolerance,
 }: useResistanceProps) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<[string, string, string]>(['NaN', 'NaN', 'NaN']);
   const resistance = trpc.postCalculate.useMutation();
 
@@ -28,14 +25,12 @@ const useResistance = ({
     }
 
     const getResistanceValue = async () => {
-      const requestBody: PostCalculateRequest = {
+      const requestBody = {
         bandAColor: resistanceA!,
         bandBColor: resistanceB!,
         bandCColor: resistanceC!,
         bandDColor: tolerance!,
       };
-
-      setIsLoading(true);
 
       const response = await resistance.mutateAsync({
         bandAColor: requestBody.bandAColor,
@@ -44,14 +39,13 @@ const useResistance = ({
         bandDColor: requestBody.bandDColor,
       });
 
-      setIsLoading(false);
       setValue(response);
     };
 
     getResistanceValue();
   }, [resistanceA, resistanceB, resistanceC, tolerance]);
 
-  return { value, isLoading };
+  return { value, loading: resistance.isLoading };
 };
 
 export default useResistance;

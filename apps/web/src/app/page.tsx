@@ -1,4 +1,4 @@
-"use client";
+import { Metadata } from 'next';
 
 // Required for material UI.
 import '@fontsource/roboto/300.css';
@@ -9,33 +9,23 @@ import '@fontsource/roboto/700.css';
 import './styles.css';
 
 import MainView from '../views/MainView/main-view';
-import { useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
-import { trpc } from '../router';
+import TrpcWrapper from './trpcWrapper';
+
+export const metadata: Metadata = {
+  title: 'Ohmline Calculator',
+  authors: [{
+    name: 'Miguel Angel Guerrero Salinas',
+    url: 'www.mgangsal.com'
+  }]
+};
 
 export function App() {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: '/trpc',
-        }),
-      ],
-    }),
-  );
-
-
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <div>
-          <MainView />
-        </div>
-      </QueryClientProvider>
-    </trpc.Provider>
-
+    <TrpcWrapper>
+      <div>
+        <MainView />
+      </div>
+    </TrpcWrapper>
   );
 }
 
