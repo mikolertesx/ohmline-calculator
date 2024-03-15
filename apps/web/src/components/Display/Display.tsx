@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Box, Card, CardContent } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 
 import styles from './Display.module.scss';
 
@@ -8,7 +8,7 @@ type DisplayProps = {
     minimum: string;
     base: string;
     maximum: string;
-    tolerance: number;
+    tolerance?: number;
 };
 
 type Mode = 'detailed' | 'simple';
@@ -18,7 +18,6 @@ const bigNumberWriting = (text: string) => {
         return NaN;
     }
 
-    console.log(text);
 
     return new Intl.NumberFormat('en-us', {
         notation: 'compact'
@@ -30,13 +29,13 @@ const commaWriting = (text: string) => {
         return NaN;
     }
 
-    console.log(text);
 
     return new Intl.NumberFormat().format(Number(text));
 };
 
 const Display = ({ base, maximum, minimum, tolerance }: DisplayProps) => {
     const [mode, setMode] = useState<Mode>('simple');
+    const [tutorial, setTutorial] = useState(true);
 
     if (Number.isNaN(base) || Number.isNaN(maximum) || Number.isNaN(minimum)) {
         return <p>
@@ -45,6 +44,7 @@ const Display = ({ base, maximum, minimum, tolerance }: DisplayProps) => {
     }
 
     const switchMode = () => {
+        setTutorial(false);
         setMode(prevMode => prevMode === 'detailed' ? 'simple' : 'detailed');
     };
 
@@ -67,6 +67,9 @@ const Display = ({ base, maximum, minimum, tolerance }: DisplayProps) => {
                     className={styles['display']}>
                     {baseContent}
                 </Box>
+                {tutorial && <Box>
+                    <Typography>Click on this bar to toggle modes</Typography>
+                </Box>}
             </CardContent>
         </Card>
     );

@@ -2,6 +2,8 @@
  * This is not a production server yet!
  * This is only a minimal backend to get started.
  */
+import * as trpcExpress from '@trpc/server/adapters/express';
+import * as trpc from '@trpc/server';
 
 import * as path from 'path';
 
@@ -20,6 +22,7 @@ import {
 // import resistances from './data/resistances';
 // import tolerances from './data/tolerances';
 import OhmValueCalculator from './logic/OhmValueCalculator';
+import { appRouter } from './server';
 
 const app = express();
 
@@ -83,6 +86,17 @@ app.post(
     });
   }
 );
+
+const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => ({})
+type Context = trpc.inferAsyncReturnType<typeof createContext>;
+
+app.use(
+  '/trpc',
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext
+  })
+)
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {

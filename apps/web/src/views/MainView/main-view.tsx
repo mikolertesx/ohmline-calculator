@@ -13,31 +13,33 @@ import Resistance from "../../components/Resistance/resistance";
 import ResistancePickerModal from "../../components/Modals/ResistancePickerModal/resistance-picker-modal";
 import TolerancePickerModal from "../../components/Modals/TolerancePickerModal/tolerance-picker-modal";
 
-import useData from "./useData";
 import useResistance from "./useResistance";
 import Display from "../../components/Display/Display";
 import { Card, CardContent, Typography } from '@mui/material';
+import { trpc } from '../../router';
 
 export type ColorCollection = [
-  ResistanceModel,
-  ResistanceModel,
-  ResistanceModel,
-  ToleranceModel,
+  ResistanceModel?,
+  ResistanceModel?,
+  ResistanceModel?,
+  ToleranceModel?,
 ];
 
 const MainView = () => {
   const [colorCollection, setColorCollection] =
     useState<ColorCollection | null>();
 
+  const resistances = trpc.getResistances.useQuery();
+  const tolerances = trpc.getTolerances.useQuery();
+
+
   const [selectedResistance, setSelectedResistance] = useState<number | null>(
     null
   );
-
-  const { colors, tolerances } = useData();
   const [showColorModal, setShowColorModal] = useState(false);
   const [showToleranceModal, setShowToleranceModal] = useState(false);
 
-  const { value: [minimumResistance, baseResistance, maximumResistance], isLoading } = useResistance({
+  const { value: [minimumResistance, baseResistance, maximumResistance] } = useResistance({
     resistanceA: colorCollection?.[0]?.name,
     resistanceB: colorCollection?.[1]?.name,
     resistanceC: colorCollection?.[2]?.name,
@@ -46,13 +48,13 @@ const MainView = () => {
 
   // Pick default values.
   useEffect(() => {
-    if (!colors || !tolerances) return;
+    if (!resistances.data || !tolerances.data) return;
 
-    const [first, second, third] = colors;
-    const [defaultTolerance] = tolerances;
+    const [first, second, third] = resistances.data;
+    const defaultTolerance = tolerances.data?.[0];
 
     setColorCollection([first, second, third, defaultTolerance]);
-  }, [colors, tolerances]);
+  }, [resistances.data, tolerances.data]);
 
   const pickColorHandler = (color?: ResistanceModel) => {
     if (color && colorCollection) {
@@ -94,21 +96,21 @@ const MainView = () => {
 
   const currentlySelectedResistance =
     selectedResistance !== null
-      ? colorCollection[selectedResistance].name
+      ? colorCollection[selectedResistance]?.name
       : undefined;
 
 
   return (
     <div className={styles['main']}>
       <ResistancePickerModal
-        colors={colors}
+        resistances={resistances.data}
         show={showColorModal}
         onPick={pickColorHandler}
         currentlySelected={currentlySelectedResistance}
       />
 
       <TolerancePickerModal
-        tolerances={tolerances}
+        tolerances={tolerances.data}
         show={showToleranceModal}
         onPick={pickResistanceHandler}
         currentlySelected={tolerance?.name}
@@ -116,7 +118,7 @@ const MainView = () => {
       <Card variant='outlined'>
         <CardContent>
           <Typography variant='h1' mt={2} textAlign='center'>
-            Click on the resistances to select colors.
+            Click on the bands to select values.
           </Typography>
         </CardContent>
       </Card>

@@ -13,7 +13,7 @@ import { Resistance as ResistanceModel } from 'prisma-database';
 import ColorBox from '../../ColorBox/ColorBox';
 
 type ResistancePickerModalProps = {
-  colors: ResistanceModel[];
+  resistances?: ResistanceModel[];
   onPick: (resistance?: ResistanceModel) => void;
   currentlySelected?: string;
   show: boolean;
@@ -22,7 +22,7 @@ type ResistancePickerModalProps = {
 // TODO Add styles to the resistance picker.
 // TODO Add virtualization to the list (Fixed Size List)
 const ResistancePickerModal = ({
-  colors,
+  resistances = [],
   show,
   onPick,
   currentlySelected,
@@ -35,23 +35,23 @@ const ResistancePickerModal = ({
           bgcolor: 'background.paper',
         }}
       >
-        {colors.map((color) => (
+        {resistances.map((resistance) => (
           <ListItem
-            key={color.name}
-            onClick={() => onPick(color)}
+            key={resistance.name}
+            onClick={() => onPick(resistance)}
             sx={{
               cursor: 'pointer',
             }}
-            secondaryAction={<ColorBox color={color.backgroundColor} />}
+            secondaryAction={<ColorBox color={resistance.backgroundColor} />}
           >
             <ListItemButton>
               <ListItemIcon>
-                {currentlySelected === color.name && <StarIcon />}
+                {currentlySelected === resistance.name && <StarIcon />}
               </ListItemIcon>
 
               <ListItemText
-                primary={`Name: ${color.name}`}
-                secondary={`Value: ${color.modifier}`}
+                primary={`Name: ${resistance.name}`}
+                secondary={`Value: ${resistance.modifier}`}
               />
             </ListItemButton>
           </ListItem>

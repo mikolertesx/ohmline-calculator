@@ -3,6 +3,7 @@ import {
   PostCalculateResponse,
 } from 'api-interface';
 import { useEffect, useState } from 'react';
+import { trpc } from '../../router';
 
 type useResistanceProps = {
   resistanceA?: string;
@@ -19,6 +20,7 @@ const useResistance = ({
 }: useResistanceProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<[string, string, string]>(['NaN', 'NaN', 'NaN']);
+  const resistance = trpc.postCalculate.useMutation();
 
   useEffect(() => {
     if (!resistanceA || !resistanceB || !resistanceC || !tolerance) {
@@ -35,20 +37,15 @@ const useResistance = ({
 
       setIsLoading(true);
 
-      const response = await fetch('/api/calculate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
+      const response = await resistance.mutateAsync({
+        bandAColor: requestBody.bandAColor,
+        bandBColor: requestBody.bandBColor,
+        bandCColor: requestBody.bandCColor,
+        bandDColor: requestBody.bandDColor,
       });
 
-      const json = (await response.json()) as PostCalculateResponse;
-
-      const { result } = json;
-
       setIsLoading(false);
-      setValue(result);
+      setValue(response);
     };
 
     getResistanceValue();

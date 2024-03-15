@@ -1,41 +1,33 @@
-import { useState, useEffect } from 'react';
-
-import {
-  Resistance as ResistanceModel,
-  Tolerance as ToleranceModel,
-} from 'prisma-database';
-
-import { 
-  GetResistanceColorsResponse,
-  GetToleranceColorsResponse,
-} from 'api-interface';
+import { trpc } from '../../router';
 
 const useData = () => {
-  const [colors, setColors] = useState<ResistanceModel[]>([]);
-  const [tolerances, setTolerances] = useState<ToleranceModel[]>([]);
+  const resistances = trpc.getResistances.useQuery();
+  const tolerances = trpc.getTolerances.useQuery();
+  // const [colors, setColors] = useState<ResistanceModel[]>([]);
+  // const [tolerances, setTolerances] = useState<ToleranceModel[]>([]);
 
-  useEffect(() => {
-    // Update setData
-    const updateData = async () => {
-      const response = await fetch('/api/resistance-colors');
-      const jsonData = (await response.json()) as GetResistanceColorsResponse;
-      setColors(jsonData.data);
-    };
+  // useEffect(() => {
+  //   // Update setData
+  //   const updateData = async () => {
+  //     const response = await fetch('/api/resistance-colors');
+  //     const jsonData = (await response.json()) as GetResistanceColorsResponse;
+  //     setColors(jsonData.data);
+  //   };
 
-    updateData();
-  }, []);
+  //   updateData();
+  // }, []);
 
-  useEffect(() => {
-    const updateData = async () => {
-      const response = await fetch('/api/tolerance-colors');
-      const jsonData = (await response.json()) as GetToleranceColorsResponse;
-      setTolerances(jsonData.data);
-    };
+  // useEffect(() => {
+  //   const updateData = async () => {
+  //     const response = await fetch('/api/tolerance-colors');
+  //     const jsonData = (await response.json()) as GetToleranceColorsResponse;
+  //     setTolerances(jsonData.data);
+  //   };
 
-    updateData();
-  }, []);
+  //   updateData();
+  // }, []);
 
-  return { colors, tolerances };
+  return { colors: resistances.data, tolerances: tolerances.data };
 };
 
 export default useData;

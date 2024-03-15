@@ -13,7 +13,7 @@ import { Tolerance as ToleranceModel } from 'prisma-database';
 import ColorBox from '../../ColorBox/ColorBox';
 
 type TolerancePickerModalProps = {
-  tolerances: ToleranceModel[];
+  tolerances?: ToleranceModel[];
   onPick: (tolerance?: ToleranceModel) => void;
   currentlySelected?: string;
   show: boolean;
@@ -21,7 +21,7 @@ type TolerancePickerModalProps = {
 
 // TODO Add styles to the resistance picker.
 const TolerancePickerModal = ({
-  tolerances,
+  tolerances = [],
   show,
   onPick,
   currentlySelected,
