@@ -66,10 +66,6 @@ const Resistance = ({
             label={`${bandIndexes[index]}`}
             textColor={resistance?.textColor}
             onClick={() => onClickResistance(index)}
-
-            // onHover={hoverHandler}
-            // onLeave={leaveHandler}
-
             showLabel={showLabels}
           />
         ))}
@@ -80,9 +76,6 @@ const Resistance = ({
           label={bandIndexes[3]}
           textColor={tolerance?.textColor}
           onClick={onClickTolerance}
-
-          // onHover={hoverHandler}
-          // onLeave={leaveHandler}
           showLabel={showLabels}
         />
       </Box>
